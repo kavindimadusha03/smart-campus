@@ -1,0 +1,198 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+:root {
+  /* ── Core Surfaces ── */
+  --background: #f7f5f0;          /* warm parchment — not white, not cream */
+  --background-secondary: #efece5; /* slightly deeper for contrast zones */
+  --foreground: #1c1a17;          /* warm near-black */
+
+  /* ── Sidebar ── */
+  --sidebar-bg: #312d27;          /* deep warm charcoal */
+  --sidebar-text: #9e9688;        /* muted warm tan */
+  --sidebar-active: #c9a84c;      /* rich amber gold */
+  --sidebar-active-bg: #2a2519;   /* subtle glow behind active item */
+  --sidebar-hover: #272318;       /* slightly lighter charcoal */
+  --sidebar-active-text: #f7f3e8; /* soft warm white */
+  --sidebar-border: #2e2b23;      /* barely visible divider */
+
+  /* ── Topbar ── */
+  --topbar-bg: #f7f5f0;
+  --topbar-border: #e0dbd0;
+
+  /* ── Cards ── */
+  --card-bg: #ffffff;
+  --card-border: #e8e3d8;
+  --card-shadow: 0 1px 3px rgba(28, 26, 23, 0.06), 0 4px 16px rgba(28, 26, 23, 0.04);
+  --card-shadow-hover: 0 4px 12px rgba(28, 26, 23, 0.10), 0 8px 32px rgba(28, 26, 23, 0.07);
+
+  /* ── Primary (Amber Gold) ── */
+  --primary: #c9a84c;             /* rich amber */
+  --primary-dark: #a8873a;        /* deeper amber for hover */
+  --primary-light: #f0d898;       /* pale amber for tints */
+  --primary-fg: #1c1a17;          /* dark text on amber buttons */
+
+  /* ── Semantic Colors ── */
+  --danger: #c0392b;
+  --danger-light: #fdf0ee;
+  --success: #2e7d52;
+  --success-light: #edf7f1;
+  --warning: #d48c1e;
+  --warning-light: #fef8ec;
+  --info: #4a6fa5;
+  --info-light: #eef2f9;
+
+  /* ── Text Hierarchy ── */
+  --text-primary: #1c1a17;
+  --text-secondary: #5a5649;
+  --text-muted: #9e9688;
+  --text-placeholder: #bab5a8;
+
+  /* ── Borders & Dividers ── */
+  --border: #e0dbd0;
+  --border-strong: #c8c2b5;
+
+  /* ── Badges / Status Pills ── */
+  --badge-active-bg: #2e7d52;
+  --badge-active-text: #ffffff;
+  --badge-inactive-bg: #c0392b;
+  --badge-inactive-text: #ffffff;
+  --badge-pending-bg: #d48c1e;
+  --badge-pending-text: #ffffff;
+  --badge-label-bg: #f0ebe0;
+  --badge-label-text: #5a5649;
+
+  /* ── Inputs ── */
+  --input-bg: #ffffff;
+  --input-border: #d8d3c8;
+  --input-border-focus: #c9a84c;
+  --input-ring: rgba(201, 168, 76, 0.20);
+
+  /* ── Misc ── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+}
+
+@theme inline {
+  /* Surfaces */
+  --color-background: var(--background);
+  --color-background-secondary: var(--background-secondary);
+  --color-foreground: var(--foreground);
+
+  /* Sidebar */
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-active-bg: var(--sidebar-active-bg);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --color-sidebar-active-text: var(--sidebar-active-text);
+  --color-sidebar-border: var(--sidebar-border);
+
+  /* Topbar */
+  --color-topbar-bg: var(--topbar-bg);
+  --color-topbar-border: var(--topbar-border);
+
+  /* Cards */
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+
+  /* Primary */
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+  --color-primary-fg: var(--primary-fg);
+
+  /* Semantic */
+  --color-danger: var(--danger);
+  --color-danger-light: var(--danger-light);
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-warning: var(--warning);
+  --color-warning-light: var(--warning-light);
+  --color-info: var(--info);
+  --color-info-light: var(--info-light);
+
+  /* Text */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-placeholder: var(--text-placeholder);
+
+  /* Borders */
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  /* Badges */
+  --color-badge-active-bg: var(--badge-active-bg);
+  --color-badge-active-text: var(--badge-active-text);
+  --color-badge-inactive-bg: var(--badge-inactive-bg);
+  --color-badge-inactive-text: var(--badge-inactive-text);
+  --color-badge-pending-bg: var(--badge-pending-bg);
+  --color-badge-pending-text: var(--badge-pending-text);
+  --color-badge-label-bg: var(--badge-label-bg);
+  --color-badge-label-text: var(--badge-label-text);
+
+  /* Inputs */
+  --color-input-bg: var(--input-bg);
+  --color-input-border: var(--input-border);
+  --color-input-border-focus: var(--input-border-focus);
+
+  /* Fonts */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ── Base ── */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c8c2b5 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c8c2b5;
+  border-radius: 99px;
+}
+
+/* ── Card Shadows via utility ── */
+.card-shadow {
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.2s ease;
+}
+
+.card-shadow:hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* ── Focus Ring ── */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ── Input Focus ── */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--input-border-focus) !important;
+  box-shadow: 0 0 0 3px var(--input-ring) !important;
+}

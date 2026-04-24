@@ -1,0 +1,465 @@
+{
+  "info": {
+    "name": "Smart Campus API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Complete API collection for Smart Campus Operations Hub"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Google Login",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/google",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"credential\": \"<google-id-token>\" }"
+            }
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "if (pm.response.code === 200) {",
+                "  var json = pm.response.json();",
+                "  pm.collectionVariables.set('token', json.token);",
+                "}"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/auth/me",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Updated Name\", \"profilePicture\": null }"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Resources",
+      "item": [
+        {
+          "name": "List Resources",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/resources?page=0&size=12",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "resources"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "12" },
+                { "key": "type", "value": "", "disabled": true },
+                { "key": "status", "value": "", "disabled": true },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "location", "value": "", "disabled": true },
+                { "key": "minCapacity", "value": "", "disabled": true },
+                { "key": "maxCapacity", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Resource by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/resources/1"
+          }
+        },
+        {
+          "name": "Create Resource",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/resources",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Lab 201\",\n  \"type\": \"LAB\",\n  \"capacity\": 40,\n  \"location\": \"Building B\",\n  \"description\": \"Computer Science Lab\",\n  \"status\": \"ACTIVE\",\n  \"availabilityWindows\": [\n    { \"dayOfWeek\": \"MONDAY\", \"startTime\": \"08:00\", \"endTime\": \"18:00\" },\n    { \"dayOfWeek\": \"WEDNESDAY\", \"startTime\": \"08:00\", \"endTime\": \"18:00\" }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Resource",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/resources/1",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Lab 201 Updated\",\n  \"type\": \"LAB\",\n  \"capacity\": 45,\n  \"location\": \"Building B\",\n  \"description\": \"Updated CS Lab\",\n  \"availabilityWindows\": []\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Resource Status",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/resources/1/status",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"OUT_OF_SERVICE\" }"
+            }
+          }
+        },
+        {
+          "name": "Delete Resource",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/resources/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Get My Bookings",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/my"
+          }
+        },
+        {
+          "name": "Get All Bookings (Admin/Manager)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings"],
+              "query": [
+                { "key": "status", "value": "", "disabled": true },
+                { "key": "resourceId", "value": "", "disabled": true },
+                { "key": "dateFrom", "value": "", "disabled": true },
+                { "key": "dateTo", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Booking by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/1"
+          }
+        },
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/bookings",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceId\": 1,\n  \"bookingDate\": \"2026-05-15\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"11:00\",\n  \"purpose\": \"Team meeting\",\n  \"expectedAttendees\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "Review Booking (Approve)",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/bookings/1/review",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"APPROVED\", \"reviewReason\": null }"
+            }
+          }
+        },
+        {
+          "name": "Review Booking (Reject)",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/bookings/1/review",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"REJECTED\", \"reviewReason\": \"Room under maintenance\" }"
+            }
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/bookings/1/cancel"
+          }
+        },
+        {
+          "name": "Get Active Resources for Booking",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/resources"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tickets",
+      "item": [
+        {
+          "name": "Get My Tickets",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/tickets/my"
+          }
+        },
+        {
+          "name": "Get Assigned Tickets",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/tickets/assigned"
+          }
+        },
+        {
+          "name": "Get All Tickets (Admin/Manager)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets?category=&priority=&status=&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"],
+              "query": [
+                { "key": "category", "value": "", "disabled": true },
+                { "key": "priority", "value": "", "disabled": true },
+                { "key": "status", "value": "", "disabled": true },
+                { "key": "search", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Ticket by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/tickets/1"
+          }
+        },
+        {
+          "name": "Create Ticket",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/tickets",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Broken projector\",\n  \"description\": \"The projector in Room 302 is not turning on\",\n  \"category\": \"IT_EQUIPMENT\",\n  \"priority\": \"HIGH\",\n  \"location\": \"Building C, Room 302\",\n  \"contactEmail\": \"reporter@university.edu\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Ticket (Assign + Status)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/tickets/1",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assignedTo\": 2,\n  \"status\": \"IN_PROGRESS\",\n  \"resolutionNotes\": \"Investigating the issue\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reject Ticket",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/tickets/1",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"REJECTED\", \"rejectionReason\": \"Duplicate report\" }"
+            }
+          }
+        },
+        {
+          "name": "Add Comment",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/tickets/1/comments",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"content\": \"I can confirm this issue.\" }"
+            }
+          }
+        },
+        {
+          "name": "Get Comments",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/tickets/1/comments"
+          }
+        },
+        {
+          "name": "Edit Comment",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/tickets/1/comments/1",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"content\": \"Updated comment content\" }"
+            }
+          }
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/tickets/1/comments/1"
+          }
+        },
+        {
+          "name": "Add Attachment Metadata",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/tickets/1/attachments",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fileName\": \"photo.jpg\",\n  \"filePath\": \"https://storage.example.com/photo.jpg\",\n  \"fileType\": \"image/jpeg\",\n  \"fileSize\": 204800\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Technicians",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/tickets/technicians"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Unread Count",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/notifications/unread-count"
+          }
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/notifications/1/read"
+          }
+        },
+        {
+          "name": "Mark All as Read",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/notifications/read-all"
+          }
+        },
+        {
+          "name": "Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/notifications/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Users",
+      "item": [
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/users"
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/users/1"
+          }
+        },
+        {
+          "name": "Update User Role",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/admin/users/1/role",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"role\": \"MANAGER\" }"
+            }
+          }
+        },
+        {
+          "name": "Toggle User Active Status",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/admin/users/1/status",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"active\": false }"
+            }
+          }
+        },
+        {
+          "name": "Update User (Combined)",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/admin/users/1",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Updated Name\", \"role\": \"TECHNICIAN\", \"active\": true }"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
