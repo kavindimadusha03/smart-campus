@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { apiFetch } from "@/lib/api";
@@ -10,8 +10,18 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import StatsCards from "@/components/booking/StatsCards";
 import FilterBar, { FilterState } from "@/components/booking/FilterBar";
-import { Plus, Check, X, Loader2, Trophy, Eye, LayoutList, CalendarDays } from "lucide-react";
+import { Plus, Check, X, Loader2, Trophy, Eye, LayoutList, CalendarDays, BarChart3 } from "lucide-react";
 import CalendarView from "@/components/booking/CalendarView";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+
+const CHART_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#06b6d4", "#71717a"];
 
 interface BookingRecord {
   id: number;
@@ -50,6 +60,19 @@ interface TopResource {
   bookingCount: number;
 }
 
+const CustomPieTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-white p-3 border border-border shadow-xl rounded-lg text-[12px]">
+        <p className="font-bold text-gray-900 border-b border-gray-100 pb-1 mb-1">{data.name}</p>
+        <p className="flex justify-between gap-4">Bookings: <span className="font-bold">{data.value}</span></p>
+      </div>
+    );
+  }
+  return null;
+};
+
 function BookingsContent() {
   const { user } = useAuth();
   const canViewAll = user?.role === "MANAGER" || user?.role === "ADMIN";
@@ -73,7 +96,16 @@ function BookingsContent() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
   const [resources, setResources] = useState<ResourceOption[]>([]);
-  const [topResource, setTopResource] = useState<TopResource | null>(null);
+  const [topResources, setTopResources] = useState<TopResource[]>([]);
+
+  const topResource = topResources.length > 0 ? topResources[0] : null;
+
+  const pieChartData = useMemo(() => {
+    return topResources.map((r) => ({
+      name: r.resourceName,
+      value: r.bookingCount,
+    }));
+  }, [topResources]);
 
   const [filters, setFilters] = useState<FilterState>({
     search: "",
@@ -130,13 +162,13 @@ function BookingsContent() {
     }
   }, []);
 
-  const fetchTopResource = useCallback(async () => {
+  const fetchTopResources = useCallback(async () => {
     try {
-      const data = await apiFetch<TopResource[]>("/api/bookings/top-resources?limit=1");
-      setTopResource(Array.isArray(data) && data.length > 0 ? data[0] : null);
+      const data = await apiFetch<TopResource[]>("/api/bookings/top-resources?limit=8");
+      setTopResources(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("Failed to fetch top resource:", err);
-      setTopResource(null);
+      console.error("Failed to fetch top resources:", err);
+      setTopResources([]);
     }
   }, []);
 
@@ -149,7 +181,7 @@ function BookingsContent() {
         fetchAllBookings(),
         fetchStats(),
         fetchResources(),
-        fetchTopResource(),
+        fetchTopResources(),
       ]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load bookings");
@@ -158,7 +190,7 @@ function BookingsContent() {
     } finally {
       setLoading(false);
     }
-  }, [fetchMyBookings, fetchAllBookings, fetchStats, fetchResources, fetchTopResource]);
+  }, [fetchMyBookings, fetchAllBookings, fetchStats, fetchResources, fetchTopResources]);
 
   useEffect(() => {
     fetchData();
@@ -321,6 +353,43 @@ function BookingsContent() {
           <div className="text-right">
             <p className="text-xl font-bold text-foreground">{topResource.bookingCount}</p>
             <p className="text-[12px] text-muted">bookings</p>
+          </div>
+        </div>
+      )}
+
+      {/* Booking Contribution Pie Chart */}
+      {pieChartData.length > 0 && (
+        <div className="rounded-xl bg-card-bg border border-border shadow-sm p-6">
+          <div className="flex items-center gap-2 mb-4 border-b border-border pb-2">
+            <BarChart3 size={18} className="text-primary" />
+            <h2 className="text-[13px] font-bold text-foreground uppercase tracking-tight">Resource Booking Contribution</h2>
+          </div>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={pieChartData}
+                  cx="50%"
+                  cy="45%"
+                  innerRadius={70}
+                  outerRadius={100}
+                  paddingAngle={4}
+                  dataKey="value"
+                >
+                  {pieChartData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} strokeWidth={0} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomPieTooltip />} />
+                <Legend
+                  verticalAlign="bottom"
+                  align="center"
+                  iconType="circle"
+                  layout="horizontal"
+                  wrapperStyle={{ fontSize: "11px", paddingTop: "16px", lineHeight: "20px" }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
       )}
