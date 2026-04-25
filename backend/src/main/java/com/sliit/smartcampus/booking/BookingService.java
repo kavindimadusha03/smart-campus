@@ -227,6 +227,8 @@ public class BookingService {
                 totalBookings, upcomingBookings, pendingBookings, cancelledBookings);
     }
 
+    
+
     public void deleteBooking(Long userId, String role, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
