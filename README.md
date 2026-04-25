@@ -9,7 +9,7 @@ The Smart Campus platform is designed to streamline campus resource management a
 •	Receive real-time notifications for booking updates and alerts
 •	View dashboards with analytics and statistics for admin oversight
 
-# Tech Stack
+## Tech Stack
 
 •	Backend: Spring Boot (Java 17) with PostgreSQL database
 •	Frontend: Next.js (React 19) with TypeScript and Tailwind CSS
@@ -17,7 +17,7 @@ The Smart Campus platform is designed to streamline campus resource management a
 •	Storage: Supabase for file/attachment storage
 •	Deployment: Configured for Railway (backend) and GitHub Pages (frontend)
 
-# Key Features
+## Key Features
 
 •	Role-based access control (Admin / Student / Lecturer)
 •	Resource availability tracking and booking suggestions
