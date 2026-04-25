@@ -10,7 +10,8 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import StatsCards from "@/components/booking/StatsCards";
 import FilterBar, { FilterState } from "@/components/booking/FilterBar";
-import { Plus, Check, X, Loader2, Trophy } from "lucide-react";
+import { Plus, Check, X, Loader2, Trophy, Eye, LayoutList, CalendarDays } from "lucide-react";
+import CalendarView from "@/components/booking/CalendarView";
 
 interface BookingRecord {
   id: number;
@@ -81,6 +82,9 @@ function BookingsContent() {
     dateFrom: "",
     dateTo: "",
   });
+
+  const [viewMode, setViewMode] = useState<"table" | "calendar">("table");
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const fetchMyBookings = useCallback(async () => {
     try {
@@ -359,8 +363,47 @@ function BookingsContent() {
         showStatusFilter={true}
       />
 
-      {/* Table */}
-      <div className="rounded-xl bg-card-bg border border-border shadow-sm overflow-x-auto">
+      {/* View Toggle */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1 rounded-lg border border-border bg-white p-1">
+          <button
+            type="button"
+            onClick={() => setViewMode("table")}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors ${
+              viewMode === "table"
+                ? "bg-primary text-primary-fg"
+                : "text-muted hover:text-foreground"
+            }`}
+          >
+            <LayoutList size={14} />
+            Table
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("calendar")}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors ${
+              viewMode === "calendar"
+                ? "bg-primary text-primary-fg"
+                : "text-muted hover:text-foreground"
+            }`}
+          >
+            <CalendarDays size={14} />
+            Calendar
+          </button>
+        </div>
+        <p className="text-[12px] text-muted">
+          {filtered.length} booking{filtered.length !== 1 ? "s" : ""} found
+        </p>
+      </div>
+
+      {viewMode === "calendar" ? (
+        <CalendarView
+          bookings={filtered}
+          onSelectDate={setSelectedDate}
+          selectedDate={selectedDate}
+        />
+      ) : (
+        <div className="rounded-xl bg-card-bg border border-border shadow-sm overflow-x-auto">
         <table className="w-full text-[13px] min-w-[700px]">
           <thead>
             <tr className="bg-background-secondary border-b border-border">
@@ -418,6 +461,13 @@ function BookingsContent() {
                     </td>
                     <td className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-1">
+                        <Link
+                          href={`/bookings/${booking.id}/`}
+                          className="rounded p-1.5 text-muted hover:text-primary hover:bg-primary-light"
+                          title="View"
+                        >
+                          <Eye size={16} />
+                        </Link>
                         {canViewAll && booking.status === "PENDING" && (
                           <>
                             <button
@@ -460,6 +510,7 @@ function BookingsContent() {
           </tbody>
         </table>
       </div>
+      )}
 
       <ConfirmModal
         open={cancelTarget !== null}
